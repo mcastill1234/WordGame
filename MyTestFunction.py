@@ -63,13 +63,13 @@ def get_word_score(word, n):
             continue
         fcomp += SCRABBLE_LETTER_VALUES[char]
 
-    scomp = max(7*len(word)-3, 3*(n-len(word)), 1)
+    scomp = max(7*len(word)-3*(n-len(word)), 1)
     word_score = fcomp*scomp
 
     return word_score
 
-#print(get_word_score('Word', 3))
-#print(get_word_score('W*rd', 3))
+# print(get_word_score('jar', 7))
+# print(get_word_score('c*ws', 3))
 
 def display_hand(hand):
     """
@@ -198,3 +198,81 @@ def deal_hand(n):
     return hand
 
 #  print(deal_hand(7))
+
+def calculate_handlen(hand):
+    """
+    Returns the length (number of letters) in the current hand.
+
+    hand: dictionary (string-> int)
+    returns: integer
+    """
+    hand_len = 0
+    for num in hand.values():
+        hand_len += num
+    return hand_len
+
+# hand = {'n': 1, 'h': 1, '*': 1, 'y': 1, 'd':1, 'w':1, 'e': 2}
+# print(calculate_handlen(hand))
+
+def play_hand(hand, word_list):
+    """
+    Allows the user to play the given hand, as follows:
+
+    * The hand is displayed.
+
+    * The user may input a word.
+
+    * When any word is entered (valid or invalid), it uses up letters
+      from the hand.
+
+    * An invalid word is rejected, and a message is displayed asking
+      the user to choose another word.
+
+    * After every valid word: the score for that word is displayed,
+      the remaining letters in the hand are displayed, and the user
+      is asked to input another word.
+
+    * The sum of the word scores is displayed when the hand finishes.
+
+    * The hand finishes when there are no more unused letters.
+      The user can also finish playing the hand by inputing two
+      exclamation points (the string '!!') instead of a word.
+
+      hand: dictionary (string -> int)
+      word_list: list of lowercase strings
+      returns: the total score for the hand
+
+    """
+    total_score = 0  # Keep track of the total score
+
+    while calculate_handlen(hand) > 0: # As long as there are still letters left in the hand:
+        print('Current Hand: ', end="")
+        display_hand(hand)  # Display the hand
+        word = str(input('Enter word, or "!!" to indicate that you are finished:'))  # Ask user for input
+
+        if word == '!!':  # If the input is two exclamation points:
+            print('Total score: ', total_score, 'points')
+            return total_score  # End the game (break out of the loop)
+
+        elif word != '!!':  # Otherwise (the input is not two exclamation points):
+            current_score = get_word_score(word, calculate_handlen(hand))
+            if is_valid_word(word, hand, word_list):  # If the word is valid:
+                print(word, 'earned', current_score, 'points.', end=" ")  # Tell the user how many points the word earned,
+                total_score += current_score
+                print('Total:', total_score, 'points')  # and the updated total score
+                hand = update_hand(hand, word)  # update the user's hand by removing the letters of their inputted word
+            else:  # Otherwise (the word is not valid):
+                print('This is not a valid word. Please enter a valid word.')  # Reject invalid word (print a message)
+                hand = update_hand(hand, word)  # update the user's hand by removing the letters of their inputted word
+
+        # Game is over (user entered '!!' or ran out of letters),
+        # so tell user the total score
+
+    print('Ran out of letters. Total score: ', total_score, 'points')
+    return total_score  # Return the total score as result of function
+
+hand = {'a': 1, 'c': 1, 'f': 1, 'i': 1, '*':1, 't':1, 'x': 1}
+
+play_hand(hand, word_list)
+
+
