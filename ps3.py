@@ -223,6 +223,7 @@ def is_valid_word(word, hand, word_list):
 #
 # Problem #5: Playing a hand
 #
+
 def calculate_handlen(hand):
     """
     Returns the length (number of letters) in the current hand.
