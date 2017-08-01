@@ -59,6 +59,8 @@ def get_word_score(word, n):
     fcomp = 0
 
     for char in word:
+        if char == '*':
+            continue
         fcomp += SCRABBLE_LETTER_VALUES[char]
 
     scomp = max(7*len(word)-3, 3*(n-len(word)), 1)
@@ -66,7 +68,8 @@ def get_word_score(word, n):
 
     return word_score
 
-# print(get_word_score('Word', 3))
+#print(get_word_score('Word', 3))
+#print(get_word_score('W*rd', 3))
 
 def display_hand(hand):
     """
@@ -131,16 +134,20 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    vowels = 'aeiou'
     word = word.lower()
     temp_hand = hand.copy()
-    wild_pos = find_word('*')
+    wild_pos = word.find('*')
 
     if wild_pos != -1:
         for v in vowels:
-            T
+            try_word = word[:wild_pos] + v + word[wild_pos + 1:]
+            if try_word in word_list:
+                break
+            elif v == 'u' and try_word not in word_list:
+                return False
 
-
-    if word not in word_list:
+    elif word not in word_list:
         return False
     for char in word:
         if char not in temp_hand.keys() or temp_hand[char] == 0:
@@ -148,9 +155,19 @@ def is_valid_word(word, hand, word_list):
         temp_hand[char] -= 1
     return True
 
-hand = {'r': 1, 'a': 3, 'p': 2, 'e': 1, 't': 1, 'u':1}
-word = "Rapture"
-print(is_valid_word(word, hand, word_list))
+#hand = {'r': 2, 'a': 1, 'p': 1, 't': 2, 'e': 1, '*': 1}
+#word = 'rapt*re'
+
+#hand = {'a': 1, 'r': 1, 'e': 1, 'j': 2, 'm': 1, '*': 1}
+#word = "e*m"
+
+#hand = {'n': 1, 'h': 1, '*': 1, 'y': 1, 'd':1, 'w':1, 'e': 2}
+#word = "h*ney"
+
+#hand = {'c': 1, 'o': 1, '*': 1, 'w': 1, 's':1, 'z':1, 'y': 2}
+#word = "c*wz"
+
+#print(is_valid_word(word, hand, word_list))
 
 def deal_hand(n):
     """

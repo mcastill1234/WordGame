@@ -95,6 +95,8 @@ def get_word_score(word, n):
     fcomp = 0  # First component variable
 
     for char in word:
+        if char == '*':
+            continue
         fcomp += SCRABBLE_LETTER_VALUES[char]
 
     scomp = max(7 * len(word) - 3 * (n - len(word)), 1)  # Second component variable
@@ -200,8 +202,17 @@ def is_valid_word(word, hand, word_list):
     """
     word = word.lower()
     temp_hand = hand.copy()
+    wild_pos = word.find('*')
 
-    if word not in word_list:
+    if wild_pos != -1:
+        for v in VOWELS:
+            try_word = word[:wild_pos] + v + word[wild_pos + 1:]
+            if try_word in word_list:
+                break
+            elif v == 'u' and try_word not in word_list:
+                return False
+
+    elif word not in word_list:
         return False
     for char in word:
         if char not in temp_hand.keys() or temp_hand[char] == 0:
