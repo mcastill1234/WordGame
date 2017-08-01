@@ -91,15 +91,15 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
-    word = word.lower()
+    word1 = word.lower()
     fcomp = 0  # First component variable
 
-    for char in word:
+    for char in word1:
         if char == '*':
             continue
         fcomp += SCRABBLE_LETTER_VALUES[char]
 
-    scomp = max(7 * len(word) - 3 * (n - len(word)), 1)  # Second component variable
+    scomp = max(7 * len(word1) - 3 * (n - len(word1)), 1)  # Second component variable
     word_score = fcomp * scomp
 
     return word_score
