@@ -271,8 +271,101 @@ def play_hand(hand, word_list):
     print('Ran out of letters. Total score: ', total_score, 'points')
     return total_score  # Return the total score as result of function
 
-hand = {'a': 1, 'c': 1, 'f': 1, 'i': 1, '*':1, 't':1, 'x': 1}
+# hand = {'a': 1, 'c': 1, 'f': 1, 'i': 1, '*':1, 't':1, 'x': 1}
 
-play_hand(hand, word_list)
+# play_hand(hand, word_list)
+
+def substitute_hand(hand, letter):
+    """
+    Allow the user to replace all copies of one letter in the hand (chosen by user)
+    with a new letter chosen from the VOWELS and CONSONANTS at random. The new letter
+    should be different from user's choice, and should not be any of the letters
+    already in the hand.
+
+    If user provide a letter not in the hand, the hand should be the same.
+
+    Has no side effects: does not mutate hand.
+
+    For example:
+        substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l')
+    might return:
+        {'h':1, 'e':1, 'o':1, 'x':2} -> if the new letter is 'x'
+    The new letter should not be 'h', 'e', 'l', or 'o' since those letters were
+    already in the hand.
+
+    hand: dictionary (string -> int)
+    letter: string
+    returns: dictionary (string -> int)
+    """
+
+    new_letter = random.choice(VOWELS + CONSONANTS)
+    sub_hand = hand.copy()
+
+    while new_letter in sub_hand.keys():
+        new_letter = random.choice(VOWELS + CONSONANTS)
+    value = sub_hand[letter]
+    del sub_hand[letter]
+    sub_hand[new_letter] = value
+
+    return sub_hand
+
+# substitute_hand({'h':1, 'e':1, 'l':2, 'o':1}, 'l')
 
 
+def play_game(word_list):
+    """
+    Allow the user to play a series of hands
+
+    * Asks the user to input a total number of hands
+
+    * Accumulates the score for each hand into a total score for the
+      entire series
+
+    * For each hand, before playing, ask the user if they want to substitute
+      one letter for another. If the user inputs 'yes', prompt them for their
+      desired letter. This can only be done once during the game. Once the
+      substitue option is used, the user should not be asked if they want to
+      substitute letters in the future.
+
+    * For each hand, ask the user if they would like to replay the hand.
+      If the user inputs 'yes', they will replay the hand and keep
+      the better of the two scores for that hand.  This can only be done once
+      during the game. Once the replay option is used, the user should not
+      be asked if they want to replay future hands. Replaying the hand does
+      not count as one of the total number of hands the user initially
+      wanted to play.
+
+            * Note: if you replay a hand, you do not get the option to substitute
+                    a letter - you must play whatever hand you just had.
+
+    * Returns the total score for the series of hands
+
+    word_list: list of lowercase strings
+    """
+
+    num_hands = int(input('Enter total number of hands: '))
+    total_score = 0
+
+    for num in range(num_hands):
+        current_score1 = 0
+        current_score2 = 0
+        hand = deal_hand(HAND_SIZE)
+        print('Current hand: ', end='')
+        display_hand(hand)
+        subs = str(input('Would you like to substitute a letter?'))
+        if subs == 'yes' or subs == 'y':
+            letter = str(input('Which letter would you like to replace? '))
+            hand = substitute_hand(hand, letter)
+        current_score1 = play_hand(hand, word_list)
+
+        replay = str(input('Would you like to replay the hand? '))
+        if replay == 'yes' or replay == 'y':
+            current_score2 = play_hand(hand, word_list)
+        total_score = total_score + max(current_score1,current_score2)
+
+    return total_score
+
+
+
+
+# play_game(word_list)
